@@ -28,7 +28,7 @@ def index():
 @app.route('/db')
 def getDB():
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM your_table')
+    cursor.execute('SELECT * FROM webimg')
     results = cursor.fetchall()
     return str(results)
 
