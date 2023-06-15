@@ -18,7 +18,7 @@ db = mysql.connector.connect(
     host='db-uploadimage.ctnvddv68d9z.ap-northeast-3.rds.amazonaws.com',
     user='admin',
     password='12341234',
-    database='db-uploadimage'
+    database='webimg'
 )
 
 @app.route("/")
