@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 import socket
 from datetime import datetime
 import pytz
+import base64
+
 
 app = Flask(__name__)
 
@@ -15,7 +17,8 @@ app = Flask(__name__)
 #     return f"Hostname: {socket.gethostname()}<br>Current Time in Indonesia: {current_time}"    
 
 # convert image to binary to store in database (blob)
-def convertToBinary(filename):
+def convertToBinaryData(filename):
+    # Convert digital data to binary format
     with open(filename, 'rb') as file:
         binaryData = file.read()
     return binaryData
@@ -25,7 +28,7 @@ db = mysql.connector.connect(
     host='db-uploadimage.ctnvddv68d9z.ap-northeast-3.rds.amazonaws.com',
     user='admin',
     password='12341234',
-    database='webimg'
+    database='webimage'
 )
 
 # @app.route("/")
@@ -43,7 +46,7 @@ db = mysql.connector.connect(
 @app.route('/')
 def getDB():
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM webimg')
+    cursor.execute('SELECT * FROM tableimg')
     results = cursor.fetchall()
     return render_template("index.html", results=results)
 
@@ -54,37 +57,33 @@ def getDB():
 #       f.save(os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(f.filename)))
 #       return 'file uploaded successfully'
 
-# store filename and image as binary to database (blob), id is auto increment
-# @app.route('/upload', methods=['POST'])
-# def upload():
-#     cursor = db.cursor()
-#     if request.method == 'POST':
-#         file = request.files['file']
-#         filename = secure_filename(file.filename)
-#         file.save(os.path.join('static/images', filename))
-#         sql = "INSERT INTO webimg (filename, image) VALUES (%s, %s)"
-#         val = (filename, convertToBinary(os.path.join('static/images', filename)))
-#         cursor.execute(sql, val)
-#         db.commit()
-#         return "Upload Success"
-    
-#     return "Upload Failed"
 
-
-# upload only filename field received from form to database
-@app.route('/upload', methods=['POST', 'GET'])
+# upload nama ke database
+@app.route('/', methods=['POST', 'GET'])
 def upload():
-    cursor = db.cursor()
+    
     if request.method == 'POST':
+        # get the file from the form and convert it to binary, then save it to the database
+
         file = request.files['file']
-        filename = secure_filename(file.filename)
-        sql = "INSERT INTO webimg (filename) VALUES (%s)"
-        val = (filename,)
+        name = request.form['name']
+
+        # save the image to the static folder using the name
+        file.save(os.path.join("static", secure_filename(file.filename)))
+        
+        # save the directory of the image to the database
+        image = os.path.join("static", secure_filename(file.filename))        
+        sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
+        val = (name, image)
+        # sql = "INSERT INTO webimg (name) VALUES (%s)"
+        # val = (name,)
+        cursor = db.cursor()
         cursor.execute(sql, val)
         db.commit()
-        return "Upload Success"
+        # return "Upload Success"
+        return render_template("index.html")
     
-    return "Upload Failed" 
+    return "Upload Failed"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)

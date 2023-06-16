@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-RUN pip install flask pytz gunicorn mysql-connector-python
+RUN pip install flask pytz gunicorn mysql-connector-python pybase64 pillow
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
