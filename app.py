@@ -30,9 +30,7 @@ def getDB():
     cursor = db.cursor()
     cursor.execute('SELECT * FROM webimg')
     results = cursor.fetchall()
-    for val in results:
-        print(val)
-    # return str(results)
+    return str(results)
 
 @app.route('/', methods = ['GET', 'POST'])
 def upload_file():
