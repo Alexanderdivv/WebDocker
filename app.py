@@ -21,18 +21,25 @@ db = mysql.connector.connect(
     database='webimg'
 )
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+# @app.route("/")
+# def index():
+#     return render_template("index.html")
 
-@app.route('/db')
+# @app.route('/db')
+# def getDB():
+#     cursor = db.cursor()
+#     cursor.execute('SELECT * FROM webimg')
+#     results = cursor.fetchall()
+#     return str(results)
+
+# show all data from database in the table form (index.html)
+@app.route('/')
 def getDB():
     cursor = db.cursor()
     cursor.execute('SELECT * FROM webimg')
     results = cursor.fetchall()
-    for val in results:
-        print(val)
-    # return str(results)
+    return render_template("index.html", results=results)
+
 
 @app.route('/', methods = ['GET', 'POST'])
 def upload_file():
