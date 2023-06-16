@@ -126,12 +126,25 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Nama File</th>
             <th scope="col">Image</th>
+            <th scope="col">Nama File</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+
+          {% for row in results %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td><img src="{{ row[1] }}" alt="Image"></td>
+            <td>{{ row[2] }}</td>
+
+            
+            
+        </tr>
+        {% endfor %}
+
+
+          <!-- <tr>
             <th scope="row">1</th>
             <td>Gambar1.jpg</td>
             <td>image</td>
@@ -145,10 +158,11 @@
             <th scope="row">3</th>
             <td>Gambar1.jpg</td>
             <td>image</td>
-          </tr>
+          </tr> -->
         </tbody>
       </table>
     </div>
+
   </body>
   <script>
     //upload file
