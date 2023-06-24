@@ -61,29 +61,47 @@ def getDB():
 # upload nama ke database
 @app.route('/', methods=['POST', 'GET'])
 def upload():
-    
-    if request.method == 'POST':
-        # get the file from the form and convert it to binary, then save it to the database
+    file = request.files['file']
+    name = request.form['name']
+    #save image to local directory (efsdata)
+    file.save(os.path.join("efsdata", secure_filename(file.filename)))
 
-        file = request.files['file']
-        name = request.form['name']
+    # get the path of the image
+    path = os.path.join("efsdata", secure_filename(file.filename))
 
-        # save the image to the static folder using the name
-        file.save(os.path.join("static", secure_filename(file.filename)))
-        
-        # save the directory of the image to the database
-        image = os.path.join("static", secure_filename(file.filename))        
-        sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
-        val = (name, image)
-        # sql = "INSERT INTO webimg (name) VALUES (%s)"
-        # val = (name,)
-        cursor = db.cursor()
-        cursor.execute(sql, val)
-        db.commit()
-        # return "Upload Success"
-        return render_template("index.html")
+    sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
+    val = (name, path)
+    # sql = "INSERT INTO webimg (name) VALUES (%s)"
+    # val = (name,)
+    cursor = db.cursor()
+    cursor.execute(sql, val)
+    db.commit()
+    return render_template("index.html")
+
+    #         # get the file from the form and convert it to binary, then save it to the database
+
+    #     file = request.files['file']
+    #     name = request.form['name']
+    #     #save image to local directory (efsdata)
+    #     file.save(os.path.join("efsdata", secure_filename(file.filename))) not working
+
+    #     # get the path of the image
+    #     path = os.path.join("efsdata", secure_filename(file.filename))
+
+
+    #     # save the directory of the image to the database
+    #     # image = file.save(os.path.join("efsdata", secure_filename(file.filename)))      
+    #     sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
+    #     val = (name, path)
+    #     # sql = "INSERT INTO webimg (name) VALUES (%s)"
+    #     # val = (name,)
+    #     cursor = db.cursor()
+    #     cursor.execute(sql, val)
+    #     db.commit()
+    #     # return "Upload Success"
+    #     return render_template("index.html")
     
-    return "Upload Failed"
+    # return "Upload Failed"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
