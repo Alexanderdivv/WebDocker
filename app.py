@@ -7,8 +7,11 @@ from datetime import datetime
 import pytz
 import base64
 
+UPLOAD_FOLDER = 'efsdata/'
+
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # @app.route("/")
 # def index():
@@ -63,8 +66,11 @@ def getDB():
 def upload():
     file = request.files['file']
     name = request.form['name']
+    # print the file to check if it is correct
+
     #save image to local directory (efsdata)
-    file.save(os.path.join("efsdata", secure_filename(file.filename)))
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
+    # file.save(os.path.join("efsdata", secure_filename(file.filename)))
 
     # get the path of the image
     path = os.path.join("efsdata", secure_filename(file.filename))
@@ -77,6 +83,7 @@ def upload():
     cursor.execute(sql, val)
     db.commit()
     return render_template("index.html")
+
 
     #         # get the file from the form and convert it to binary, then save it to the database
 
@@ -105,3 +112,32 @@ def upload():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
+
+
+# create code to save image to local directory (efsdata)
+# import os
+# from flask import Flask, flash, request, redirect, url_for
+# from werkzeug.utils import secure_filename
+
+# UPLOAD_FOLDER = '/efsdata'
+# ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+# app = Flask(__name__)
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# # save image to local directory (efsdata)
+# # https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
+# # https://stackoverflow.com/questions/24612395/how-to-properly-upload-files-to-flask-server
+# # https://stackoverflow.com/questions/28905999/flask-upload-file-and-process-it
+
+# # https://stackoverflow.com/questions/24612395/how-to-properly-upload-files-to-flask-server
+
+# # https://stackoverflow.com/questions/24612395/how-to-properly-upload-files-to-flask-server
+
+
+# # https://stackoverflow.com/questions/24612395/how-to-properly-upload-files-to-flask-server
+
