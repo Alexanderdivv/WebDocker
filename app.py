@@ -48,6 +48,13 @@ def getDB():
     cursor = db.cursor()
     cursor.execute('SELECT * FROM tableimg')
     results = cursor.fetchall()
+    # get the image from directory and show it in the table html
+    # for result in results:
+    #     image = result[1]
+    #     with open(image, "rb") as img_file:
+    #         my_string = base64.b64encode(img_file.read())
+    #         result[1] = my_string.decode('utf-8')
+
     return render_template("index.html", results=results)
 
 # @app.route('/', methods = ['GET', 'POST'])
