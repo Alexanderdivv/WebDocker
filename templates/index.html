@@ -139,9 +139,7 @@
           {% for row in results %}
         <tr>
             <td>{{ row[0] }}</td>
-            <td><img src="{{ url_for('static', filename=row[1]) }}" alt="Image" width="100px" height="auto"></td>
-            <!-- show image -->
-            <!-- <td><img src="{{ url_for('static', filename=row[1]) }}" alt="Image" width="100px" height="auto"></td> -->
+            <td><img src="{{ row[1] }}" alt="Image" width="100px" height="auto"></td>
             <td>{{ row[2] }}</td>
 
             
