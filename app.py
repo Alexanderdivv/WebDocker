@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, send_from_directory
 import os
 import mysql.connector
 from werkzeug.utils import secure_filename
@@ -9,6 +9,9 @@ import base64
 
 
 app = Flask(__name__)
+
+app.config['UPLOAD_FOLDER'] = '/efsdata'
+
 
 # @app.route("/")
 # def index():
@@ -31,16 +34,12 @@ db = mysql.connector.connect(
     database='webimage'
 )
 
-# @app.route("/")
-# def index():
-#     return render_template("index.html")
+# route to serve image
+@app.route('/<path:filename>')
+def serve_image(filename):
+    return send_from_directory("/",filename)
 
-# @app.route('/db')
-# def getDB():
-#     cursor = db.cursor()
-#     cursor.execute('SELECT * FROM webimg')
-#     results = cursor.fetchall()
-#     return str(results)
+# send_from_directory is used to send files from your flask app
 
 # show all data from database in the table form (index.html)
 @app.route('/')
@@ -48,13 +47,14 @@ def getDB():
     cursor = db.cursor()
     cursor.execute('SELECT * FROM tableimg')
     results = cursor.fetchall()
-    # get the image from directory and show it in the table html
-    # for result in results:
-    #     image = result[1]
-    #     with open(image, "rb") as img_file:
-    #         my_string = base64.b64encode(img_file.read())
-    #         result[1] = my_string.decode('utf-8')
+    # show if the image is already in directory or not
+    # for row in results:
+    #     if os.path.exists(row[1]):
+    #         print("Yes there is")
+    #     else:
+    #         print("No there is not")
 
+    
     return render_template("index.html", results=results)
 
 # @app.route('/', methods = ['GET', 'POST'])
@@ -68,47 +68,33 @@ def getDB():
 # upload nama ke database
 @app.route('/', methods=['POST', 'GET'])
 def upload():
-    file = request.files['file']
-    name = request.form['name']
-    #save image to local directory (efsdata)
-    file.save(os.path.join("/efsdata", secure_filename(file.filename)))
+    if request.method == 'POST':
+        # get the file from the form and convert it to binary, then save it to the database
+        file = request.files['file']
+        name = request.form['name']
+        #save image to local directory (efsdata)
+        
+        file.save(os.path.join("/efsdata", secure_filename(file.filename)))
+        # file.save(os.path.join("/efsdata", file.filename))
+        # save image to volume app.config['UPLOAD_FOLDER']
+        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
 
-    # get the path of the image
-    path = os.path.join("/efsdata", secure_filename(file.filename))
 
-    sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
-    val = (name, path)
-    # sql = "INSERT INTO webimg (name) VALUES (%s)"
-    # val = (name,)
-    cursor = db.cursor()
-    cursor.execute(sql, val)
-    db.commit()
+        # get the path of the image
+        path = os.path.join("/efsdata", secure_filename(file.filename))
+
+        sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
+        val = (name, path)
+        # sql = "INSERT INTO webimg (name) VALUES (%s)"
+        # val = (name,)
+        cursor = db.cursor()
+        cursor.execute(sql, val)
+        db.commit()
     return render_template("index.html")
-
-    #         # get the file from the form and convert it to binary, then save it to the database
-
-    #     file = request.files['file']
-    #     name = request.form['name']
-    #     #save image to local directory (efsdata)
-    #     file.save(os.path.join("efsdata", secure_filename(file.filename))) not working
-
-    #     # get the path of the image
-    #     path = os.path.join("efsdata", secure_filename(file.filename))
-
-
-    #     # save the directory of the image to the database
-    #     # image = file.save(os.path.join("efsdata", secure_filename(file.filename)))      
-    #     sql = "INSERT INTO tableimg (image, name) VALUES (%s, %s)"
-    #     val = (name, path)
-    #     # sql = "INSERT INTO webimg (name) VALUES (%s)"
-    #     # val = (name,)
-    #     cursor = db.cursor()
-    #     cursor.execute(sql, val)
-    #     db.commit()
-    #     # return "Upload Success"
-    #     return render_template("index.html")
     
-    # return "Upload Failed"
+
+
+ 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)

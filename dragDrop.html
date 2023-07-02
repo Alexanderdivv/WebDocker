@@ -1,10 +1,84 @@
-<div class="drag-area">
-    <div class="icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-    <header>Drag & Drop</header>
-    <span>or</span>
-    <label class="btn btn-default btn-sm center-block btn-file btton">
-      <!-- <i class="fa fa-upload fa-2x" aria-hidden="true"></i> -->
-      Browse
-      <input type="file" name="image" style="display: none"/>
-    </label>
-  </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>File Upload Form</title>
+    <style>
+      .drop-area {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
+      .file-input {
+        display: none;
+      }
+      .file-display img {
+        display: block;
+        max-width: 400px;
+        margin-bottom: 10px;
+      }
+      .file-display .message {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="drop-area" id="dropArea">
+      <p>Drag and drop an image here or click the button to upload.</p>
+      <input type="file" class="file-input" id="fileInput" />
+      <button type="button" onclick="selectFile()">Upload Image</button>
+      <div class="file-display" id="fileDisplay">
+        <p class="message">No image uploaded</p>
+      </div>
+    </div>
+
+    <script>
+      const dropArea = document.getElementById("dropArea");
+      const fileInput = document.getElementById("fileInput");
+      const fileDisplay = document.getElementById("fileDisplay");
+      const message = document.querySelector(".message");
+
+      // Handle file drop event
+      dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("dragover");
+      });
+
+      dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        handleFile(files[0]);
+      });
+
+      // Handle file selection using button click
+      function selectFile() {
+        fileInput.click();
+      }
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        handleFile(file);
+      });
+
+      // Handle selected file
+      function handleFile(file) {
+        fileDisplay.innerHTML = "";
+
+        if (file && file.type.startsWith("image/")) {
+          const fileUrl = URL.createObjectURL(file);
+          const image = document.createElement("img");
+          image.src = fileUrl;
+          fileDisplay.appendChild(image);
+          message.style.display = "none";
+        } else {
+          message.style.display = "block";
+        }
+      }
+    </script>
+  </body>
+</html>

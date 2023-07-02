@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA_Compatible" content="ie=edge" />
     <title>RBTeam</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/5602/5602732.png">
-  </head>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/512/5602/5602732.png"
+    />
+
     <link
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       rel="stylesheet"
@@ -34,10 +37,14 @@
     />
 
     <style>
+      body {
+        display: flex;
+        flex-wrap: wrap;
+      }
       .drag-area {
         border: 2px dashed #fff;
-        min-height: 350px;
-        margin-bottom: 10%;
+        padding: 5px;
+        margin-bottom: 5%;
         border-radius: 5px;
         display: flex;
         align-items: center;
@@ -52,10 +59,10 @@
         font-size: 100px;
         color: #fff;
       }
-      .drag-area header {
+      header {
         font-size: 30px;
-        font-weight: 500;
-        color: #fff;
+        font-weight: 200;
+        color: #585858;
       }
       .drag-area span {
         font-size: 25px;
@@ -63,28 +70,20 @@
         color: #fff;
         margin: 10px 0 15px 0;
       }
-      .drag-area button {
-        padding: 10px 25px;
-        font-size: 20px;
-        font-weight: 500;
-        border: none;
-        outline: none;
-        background: #fff;
-        color: #5256ad;
-        border-radius: 5px;
-        cursor: pointer;
-      }
+
       .drag-area img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
+        height: 30%;
+        /* width: 30%; */
+        /* object-fit: cover; */
         border-radius: 5px;
+        max-width: -webkit-fill-available;
       }
       .column {
         /* width: 50%; */
         padding: 40px;
         height: 100%;
-        min-width: 300px;
+        /* min-width: 300px; */
+        max-width: 40%;
         border-radius: 20px;
         background-color: #dedede;
         margin: 10px;
@@ -106,22 +105,31 @@
         justify-content: space-between;
         height: 100%;
       }
-    button.btn{
-      margin-top: 10px;
-    }
+      button.btn {
+        margin-top: 10px;
+      }
     </style>
   </head>
   <body>
     <div class="column">
       <form action="/" method="POST" enctype="multipart/form-data">
-        
-        <input type="file" name="file">
-
-
+        <!-- input file using drag and drop and upload using button -->
+        <header>Upload File</header>
+        <div class="drag-area">
+          <input type="file" id="fileInput" name="file" class="form-control" />
+        </div>
         <!-- input name for the file -->
-        <label for="name">File name:</label>
-        <input type="text" id="name" name="name" class="form-control" id="formGroupExampleInput" placeholder="Example input" required>
-        
+        <!-- <label for="name">File name:</label> -->
+        <input
+          type="text"
+          id="name"
+          name="name"
+          class="form-control"
+          id="formGroupExampleInput"
+          placeholder="File Label/Name"
+          required
+        />
+
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
@@ -135,54 +143,43 @@
           </tr>
         </thead>
         <tbody>
-
           {% for row in results %}
-        <tr>
+          <tr>
             <td>{{ row[0] }}</td>
-            <td><img src="{{ row[1] }}" alt="Image" width="100px" height="auto"></td>
+            <td>
+              <!-- <img src="{{row[1]}}" alt="Image" width="100px" height="auto" /> -->
+              <img src="..{{row[1]}}" alt="Image" width="100px" height="auto" />
+              <!-- show the image from the volume -->
+            </td>
+
             <td>{{ row[2] }}</td>
-
-            
-        </tr>
-        {% endfor %}
-
-
-          <!-- <tr>
-            <th scope="row">1</th>
-            <td>Gambar1.jpg</td>
-            <td>image</td>
           </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Gambar1.jpg</td>
-            <td>image</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Gambar1.jpg</td>
-            <td>image</td>
-          </tr> -->
+          {% endfor %}
         </tbody>
 
         <!-- submit -->
       </table>
     </div>
-
   </body>
   <script>
     //upload file
     //selecting all required elements
-    const dropArea = document.querySelector(".drag-area"),
-      dragText = dropArea.querySelector("header"),
-      button = dropArea.querySelector("button"),
-      input = dropArea.querySelector("input");
+    const dropArea = document.querySelector(".drag-area");
+    const dragText = dropArea.querySelector("header");
+    const button = dropArea.querySelector("button");
+    const input = dropArea.querySelector("input");
+    const inputFile = document.querySelector("#fileInput");
     let file; //this is a global variable and we'll use it inside multiple functions
 
     // button.onclick = () => {
     //   input.click(); //if user click on the button then the input also clicked
     // };
 
-    input.addEventListener("change", function () {
+    selectFile = () => {
+      inputFile.click(); //if user click on the button then the input also clicked
+    };
+
+    inputFile.addEventListener("change", function () {
       //getting user select file and [0] this means if user select multiple files then we'll select only the first one
       console.log("test");
       file = this.files[0];
@@ -223,7 +220,7 @@
           let imgTag = `<img src="${fileURL}" alt="">`; //creating an img tag and passing user selected file source inside src attribute
           dropArea.innerHTML = imgTag; //adding that created img tag inside dropArea container
         };
-        fileReader.readAsDataURL(file);
+        // fileReader.readAsDataURL(file);
       } else {
         alert("This is not an Image File!");
         dropArea.classList.remove("active");

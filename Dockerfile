@@ -10,6 +10,14 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
+
+# /efsdata is the mount point for the EFS volume
+VOLUME /efsdata
+
+
+
+
+
 # COPY app.py /
 
 CMD ["python", "app.py"]
